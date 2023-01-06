@@ -1,0 +1,15 @@
+Refactoring Justifications:
+The candidate variable is initialized to TRIVIAL_PARTITION_KEY at the beginning of the function, so there is no need to check if it is undefined later.
+The if (event) block and the if (candidate) block can be combined into a single if (event) block since the candidate variable is guaranteed to be defined inside this block.
+The if (typeof candidate !== "string") block can be replaced with simple string coercion using String(candidate), which is more concise and easier to read.
+
+Unit Tests Coverage:
+If the event object has a partitionKey property, the function should return its value.
+If the event object does not have a partitionKey property, the function should return a SHA3-512 hash of the event object.
+If the event object is falsy (null or undefined), the function should return the trivial partition key ("0").
+If the partitionKey property of the event object is longer than the maximum partition key length (256 characters), the function should return a SHA3-512 hash of the partitionKey property.
+
+Potential Improvements:
+Return early if a valid partition key is provided, currently, the function does a lot of unnecessary checks and operations
+Use a faster hash function, although SHA3-512 is more secure, however, if speed is of concern one of the faster hashing functions like MD5 or SHA1 can be used instead
+Cache the hash of the event object, if this function is called multiple times with the same event object, it will recalculate the hash of the object each time. To improve the performance of this function, we can cache the hash of the object and return the cached value if the function is called again with the same event object. An appropriate cache data structure can be a JavaScript Map for smaller caches or a JavaScript Object for larger caches.
